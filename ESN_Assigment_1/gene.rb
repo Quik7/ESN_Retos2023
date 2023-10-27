@@ -1,6 +1,17 @@
+#-----------------------------------------------------
+# Bioinformatic programming challenges
+# Assignment1: GENE Object
+# author: Enrique Solera Navarro
+#-----------------------------------------------------
+
+
+
 class Gene
     @@genes = []
-    attr_reader :gene_id, :gene_name, :mutant_phenotype
+    attr_accessor :gene_id, :gene_name, :mutant_phenotype
+
+    @@all_gene_objects = Hash.new # Class variable that will save in a hash all the instances of Gene created (key: gene ID)
+  
 
     filename = ARGV[0]
 
@@ -10,7 +21,7 @@ class Gene
     end
 
 
-    def initialize(gene_id)
+    def initialize(gene_id, gene_name, mutant_phenotype)
       if gene_id =~ /A[Tt]\d[Gg]\d\d\d\d\d/   # Check if the gene_id matches the desired format
         @gene_id = gene_id
       else
@@ -18,7 +29,8 @@ class Gene
         abort
       end
 
-      @@genes << self
+      @gene_name = gene_name
+      @mutant_phenotype = mutant_phenotype
 
     end
 
