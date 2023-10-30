@@ -12,7 +12,7 @@ def main(gene_file, seed_stock_file, cross_data_file, new_stock_file)
     print_final_report(genes)
 end
   
-  # Call to the main function with the program arguments
+# Call to the main function with the program arguments
 unless ARGV.length == 4
     puts "ERROR: Usage: ruby #{$0} gene_information.tsv seed_stock_data.tsv cross_data.tsv new_stock_file.tsv"
     exit
