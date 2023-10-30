@@ -5,6 +5,7 @@
 #----------------------------------------------------- 
 
 require 'date'
+require './gene.rb'
 
 class SeedStock
     #Seed_Stock	Mutant_Gene_ID	Last_Planted Storage Grams_Remainin
@@ -13,11 +14,11 @@ class SeedStock
     # Class variable that will save in a hash all the instances of SeedStock created (key: seedstock ID)
     @@all_seedstock_object = Hash.new 
 
-    filename = ARGV[0]
-    outputname = ARGV[1]
+    filename = ARGV[1]
+    outputname = ARGV[2]
 
     unless filename and outputname
-        puts "ERROR: proper execution of this script is: ruby main.rb gene_information.tsv  seed_stock_data.tsv  cross_data.tsv outputfile.tsv"
+        puts "ERROR: proper execution of this script is: ruby database.rb gene_information.tsv  seed_stock_data.tsv  cross_data.tsv outputfile.tsv"
         abort
     end
 
@@ -25,7 +26,7 @@ class SeedStock
         @seed_stock = seed_stock
         @mutant_gene_id = mutant_gene_id
         #@gene = Gene.new(mutant_gene_id)
-        #abort "gene must be a gene object" unless @mutant_gene_id.is_a? Mutant_Gene_ID
+        abort "gene must be a gene object" unless @mutant_gene_id.is_a? Gene
         @last_planted = last_planted
         @storage = storage
         @grams_remaining = grams_remaining.to_i #converts to integer
