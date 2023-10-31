@@ -1,3 +1,9 @@
+#-----------------------------------------------------
+# Bioinformatic programming challenges
+# Assignment1: Seed_Stock OBJECT
+# author: Enrique Solera Navarro
+#-----------------------------------------------------
+
 require 'date'
 class SeedStock
     attr_accessor :seed_stock_id, :mutant_gene, :last_planted, :storage, :grams_remaining

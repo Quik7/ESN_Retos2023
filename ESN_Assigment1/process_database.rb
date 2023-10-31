@@ -4,7 +4,6 @@
 # author: Enrique Solera Navarro
 #-----------------------------------------------------
 
-
 require './gene.rb'
 require './seed_stock.rb'
 require './hybrid_cross.rb'

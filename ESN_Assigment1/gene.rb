@@ -1,3 +1,9 @@
+#-----------------------------------------------------
+# Bioinformatic programming challenges
+# Assignment1: GENE Object
+# author: Enrique Solera Navarro
+#-----------------------------------------------------
+
 class Gene
   attr_accessor :gene_id, :gene_name, :mutant_phenotype, :linked_genes
 
@@ -5,7 +11,7 @@ class Gene
     @gene_id = params.fetch(:gene_id, '')
     @gene_name = params.fetch(:gene_name, '')
     @mutant_phenotype = params.fetch(:mutant_phenotype, '')
-    @linked_genes = []
+    @linked_genes = [] #storage the linked genes from the hybrid cross
 
     validate_gene_id
   end
