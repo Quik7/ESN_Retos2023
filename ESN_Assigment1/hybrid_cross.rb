@@ -1,3 +1,9 @@
+#-----------------------------------------------------
+# Bioinformatic programming challenges
+# Assignment1: Hybrid Cross OBJECT 
+# author: Enrique Solera Navarro
+#-----------------------------------------------------
+
 class HybridCross
     attr_accessor :parent1, :parent2, :f2_wild, :f2_p1, :f2_p2, :f2_p1p2
   

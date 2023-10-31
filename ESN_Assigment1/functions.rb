@@ -1,3 +1,13 @@
+#-----------------------------------------------------
+# Bioinformatic programming challenges
+# Assignment1: Functions 
+# author: Enrique Solera Navarro
+#-----------------------------------------------------
+# The purpose of this script is that it contains various functions that handle the loading of data 
+# from files, processing of data, and updating of genebank information. These functions are crucial 
+# for the main program to execute its tasks.
+#-----------------------------------------------------
+
 def load_genes(file)
     genes = {}
     File.open(file).each_with_index do |line, index|
@@ -51,6 +61,7 @@ def load_genes(file)
   end
   
   def plant_seeds_and_update_genebank(seed_stocks, file)
+    #checks if the file already exist and ask the user if he wants to delete it or not
     if File.exist?(file)
       print "The file #{file} already exist. Do you want to overwrite? (y/n): "
       response = STDIN.gets.chomp.downcase
@@ -78,6 +89,9 @@ def load_genes(file)
   
   end
   
+  # This function processes each cross in the list of crosses, calculates the chi-square and determines whether the genes of the parents are genetically linked.
+  # If the chi-square value is equal to or greater than 3.841 (critical value for a significance level of 0.05), then the genes are considered to be linked.
+  # In that case, the genes are added as linked genes and a message is printed on the console indicating that the genes are linked.
   
   def calculate_chi_square_and_update_genes(crosses)
     crosses.each do |cross|
@@ -89,6 +103,11 @@ def load_genes(file)
       end
     end
   end
+  
+
+  # This function prints the final report of the genetically linked genes.
+  # It iterates through each gene, and for each gene, it checks if it has any linked genes.
+  # If it has linked genes, it prints the gene name and its linked genes.
   
   def print_final_report(genes)
     puts "Final Report:"
