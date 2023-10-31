@@ -18,7 +18,7 @@ class Gene
 
   def validate_gene_id
     unless @gene_id.match?(/A[Tt]\d[Gg]\d\d\d\d\d/)
-      puts "Error: the gene identifier #{@gene_id} is not in the correct format. It has to be ATXGXXXXX"
+      puts "Error: the Gene ID #{@gene_id} is not in the correct format. It has to be ATXGXXXXX"
       exit
     end
   end

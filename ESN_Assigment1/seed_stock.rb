@@ -14,15 +14,17 @@ class SeedStock
       @last_planted = params.fetch(:last_planted, '')
       @storage = params.fetch(:storage, '')
       @grams_remaining = params.fetch(:grams_remaining, 0)
+
+      validate_params
     end
 
     def validate_params
         unless @mutant_gene.is_a? Gene
-          raise "Error: the provided gene is invalid."
+          puts "Error: the provided mutant_gene must be a gene object."
           abort
         end
         unless @grams_remaining.is_a? Integer
-          raise "Error: the number of remaining seeds must be a whole number."
+          puts "Error: the number of remaining seeds must be a whole number."
           abort
         end
     end

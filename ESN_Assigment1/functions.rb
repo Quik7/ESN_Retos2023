@@ -51,10 +51,10 @@ def load_genes(file)
       crosses << HybridCross.new(
         parent1: parent1,
         parent2: parent2,
-        f2_wild: f2_wild.to_i,
-        f2_p1: f2_p1.to_i,
-        f2_p2: f2_p2.to_i,
-        f2_p1p2: f2_p1p2.to_i
+        f2_wild: f2_wild,
+        f2_p1: f2_p1,
+        f2_p2: f2_p2,
+        f2_p1p2: f2_p1p2
       )
     end
     crosses
