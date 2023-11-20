@@ -1,0 +1,29 @@
+Network Analysis Report
+Depth of Interaction Analysis: 2
+--------------------------------------------
+
+Network ID: 1, Number of Nodes: 2
+Genes in Network:
+	Gene ID: 
+
+--------------------------------------------
+Network ID: 2, Number of Nodes: 3
+Genes in Network:
+	Gene ID: 
+
+--------------------------------------------
+Network ID: 3, Number of Nodes: 2
+Genes in Network:
+	Gene ID: 
+
+--------------------------------------------
+Network ID: 4, Number of Nodes: 4
+Genes in Network:
+	Gene ID: 
+
+--------------------------------------------
+Network ID: 5, Number of Nodes: 3
+Genes in Network:
+	Gene ID: 
+
+--------------------------------------------
