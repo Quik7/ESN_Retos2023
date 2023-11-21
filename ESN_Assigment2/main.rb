@@ -3,6 +3,7 @@ require './gene.rb'
 require './protein.rb'
 require './network.rb'
 require 'net/http'
+require './annotation.rb'
 
 # Define a constant for maximum interaction depth
 $MAX_LEVEL = 2
@@ -24,7 +25,7 @@ end
 def write_record(networks, filename)
   File.open(filename, "w") do |file|
     file.puts "Network Analysis Report"
-    file.puts "Depth of Interaction Analysis: #{$MAX_LEVEL}"
+    file.puts "Depth of Interaction Analysis: #{$MAX_LEVEL}\n\n"
     file.puts "--------------------------------------------\n\n"
 
     networks.each do |id_net, network_obj|
@@ -42,7 +43,20 @@ def write_record(networks, filename)
 end
 
 # Main execution block
+def ayuda
+  puts 'Assigment #2 - Interaction Network'
+  puts 'Enrique Solera Navarro 2023'
+  puts "\nusage: ruby main.rb geneList.txt output.txt\n"
+  puts 'geneList.txt : co-expressed gene list'
+  puts 'output.txt : generated file with the report of the information linking these predicted sub-sets into known regulatory networks'
+end
+
 def main(input_file, output_file)
+  if ARGV[0] == "-help" || ARGV[0] == "-h"
+    ayuda
+    exit
+  end
+  
   abort "USAGE: ruby main.rb geneList.txt output.txt" unless input_file && output_file
   abort "Error: File #{input_file} does not exist" unless File.exist?(input_file)
   if File.exist?(output_file)
@@ -75,28 +89,3 @@ end
 # Check for command-line arguments and execute the main function
 main(ARGV[0], ARGV[1])
 
-
-
-# Check the input file
-
-unless ARGV[0] && ARGV[1] # We check user provides the gene list file
-    abort "USAGE: main.rb genelist.txt output.txt"
-end
-
-unless File.exists?(ARGV[0]) # We check the given file exists
-    abort "Error: File #{ARGV[0]} does not exist"
-end
-
-def ayuda
-  puts 'Assigment #2 - Interaction Network'
-  puts 'Enrique Solera Navarro 2023'
-  puts "\nusage: ruby main.rb geneList.txt output.txt\n"
-  puts 'geneList.txt : co-expressed gene list'
-  puts 'output.txt : generated file with the report of the information linking these predicted sub-sets into known regulatory networks'
-end
-
-
-if ARGV[0] == "-help" || ARGV[0] == "-h"
-  ayuda
-  exit
-end

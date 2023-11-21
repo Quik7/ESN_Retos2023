@@ -61,8 +61,11 @@ class Network
 
   # Helper method to update network based on protein-protein interactions (PPIs)
   def self.update_network_for_ppis(protein_object, network_id)
+    # Return immediately if there are no protein-protein interactions stored in $PPIS.
     return unless $PPIS && $PPIS.any?
     $PPIS.each do |ppi|
+      # Determine the interactant ID by checking if either of the PPI pair matches the current protein's IntAct ID.
+      # If neither matches, interactant_id is set to nil.
       interactant_id = ppi[0] == protein_object.intact_id ? ppi[1] : ppi[1] == protein_object.intact_id ? ppi[0] : nil
       next unless interactant_id
 
@@ -70,6 +73,8 @@ class Network
       next unless interactant && interactant.network.nil?
 
       add_nodes2network(network_id)
+      # Recursively assign the interactant protein to the same network.
+      # This will also trigger updates for any proteins interacting with this interactant.
       assign(interactant, network_id)
     end
   end

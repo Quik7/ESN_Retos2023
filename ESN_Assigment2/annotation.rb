@@ -1,13 +1,19 @@
-class Annotation
-    attr_accessor :annotations
-  
-    def initialize
-      @annotations = {} # { type => { id => name } }
-    end
-  
-    def add_annotation(type, id, name)
-      @annotations[type] ||= {}
-      @annotations[type][id] = name
-    end
+class UsoGeneral
+  def initialize
+    @annotations = {}
   end
+
+  def add_annotation(type, identifier, value)
+    @annotations[type] ||= {}
+    @annotations[type][identifier] = value
+  end
+
+  def get_annotations(type)
+    @annotations[type] || {}
+  end
+
+  def all_annotations
+    @annotations
+  end
+end
   

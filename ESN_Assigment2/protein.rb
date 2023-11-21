@@ -101,6 +101,7 @@ class PPI
 
     ppis = get_ppis(intact_id)
     ppis&.each do |id1, id2|
+      #Preventing Infinite Loops in Interactions
       next if Protein.exists(id1) || Protein.exists(id2)
       Protein.create_prot(Protein.intactcode2protid(id1), level, nil, id1) if id2 == intact_id
       Protein.create_prot(Protein.intactcode2protid(id2), level, nil, id2) if id1 == intact_id

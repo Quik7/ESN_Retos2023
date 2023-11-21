@@ -6,6 +6,7 @@
 require 'net/http'
 require 'json'
 require './protein.rb'
+require './annotation.rb'
 
 class Gene
   attr_accessor :gene_id, :prot_id, :kegg, :go
@@ -24,6 +25,7 @@ class Gene
     @go = params.fetch(:go, {}) # GO annotations, if any
     # Store the new object in the class variable
     @@total_gene_objects[@prot_id] = self
+    @uso_general = UsoGeneral.new
     
   end
 
@@ -59,6 +61,8 @@ class Gene
   def annotate
     annotate_kegg
     annotate_go
+    @kegg.each { |id, name| @uso_general.add_annotation('KEGG', id, name) }
+    @go.each { |id, term| @uso_general.add_annotation('GO', id, term) }
   end
 
 
