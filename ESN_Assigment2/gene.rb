@@ -36,6 +36,7 @@ class Gene
   def self.get_prot_id(gene_id)
     uri = URI("http://togows.org/entry/ebi-uniprot/#{gene_id}/entry_id.json")
     response = get_response(uri)
+    #puts "Response from UniProt ID fetch: #{response}"  # Debugging
     response[0]
   end
 
@@ -44,8 +45,11 @@ class Gene
     File.open(filename, 'r') do |file|
       file.each_line do |line|
         gene_id = line.chomp
+        #puts "Read gene ID from file: #{gene_id}"  # Debugging
         prot_id = get_prot_id(gene_id)
+        #puts "Fetched UniProt ID for gene: #{prot_id}"  # Debugging
         Gene.new(gene_id: gene_id, prot_id: prot_id)
+        #puts "Created Gene object with ID: #{@gene_id}, associated with Protein ID: #{@prot_id}"
         Protein.create_prot(prot_id, 0, gene_id)
       end
     end
@@ -57,7 +61,7 @@ class Gene
     annotate_go
   end
 
-  private
+
   # https://www.rubyguides.com/2018/10/method-visibility/
   # private keyword is used to denote that methods like validate_gene_id, get_response, annotate_kegg, and annotate_go are meant 
   #for internal use within the class. They are part of the class's internal logic and are not intended to be accessed directly 
@@ -65,8 +69,10 @@ class Gene
 
   # Validates the gene ID format
   def validate_gene_id(gene_id)
-    unless gene_id.match?(/A[Tt]\d[Gg]\d\d\d\d\d/)
-      puts "Error: the Gene ID #{gene_id} is not in the correct format. It has to be ATXGXXXXX"
+    if gene_id.match?(/A[Tt]\d[Gg]\d\d\d\d\d/)
+      gene_id
+    else
+      puts "Error: the Gene ID #{gene_id} is not in the correct format. It should be ATXGXXXXX"
       exit
     end
   end

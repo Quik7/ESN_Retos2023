@@ -32,6 +32,7 @@ class Protein
 
   # Creates a Protein object with provided details and checks for interactions
   def self.create_prot(prot_id, level, gene_id = nil, intact = nil)
+    #puts "Creating Protein object with UniProt ID: #{prot_id}, IntAct ID: #{intact}, at level: #{level}"
     intact ||= get_prot_intactcode(gene_id) if level.zero?
     if intact && (level < $MAX_LEVEL)
       PPI.create_ppis(intact, level)

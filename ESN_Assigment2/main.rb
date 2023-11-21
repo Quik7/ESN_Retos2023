@@ -13,8 +13,8 @@ def uri_fetch(uri_str)
   response = Net::HTTP.get_response(address)
 
   case response
-  when Net::HTTPSuccess
-    response
+  when Net::HTTPSuccess then
+    return response
   else
     abort "Error: Unable to fetch data from #{uri_str}. Error type: #{response.class}"
   end 
@@ -31,6 +31,7 @@ def write_record(networks, filename)
       file.puts "Network ID: #{id_net}, Number of Nodes: #{network_obj.num_nodes}"
       file.puts "Genes in Network:"
       network_obj.members.each do |id, gene|
+        #puts "Processing Gene ID: #{id}, KEGG Annotations: #{gene.kegg.keys.join(', ')}"
         file.puts "\tGene ID: #{id}"
         gene.kegg.each { |kegg_id, name| file.puts "\t\tKEGG Pathway: #{kegg_id} - #{name}" }
         gene.go.each { |go_id, term| file.puts "\t\tGO Term: #{go_id} - #{term}" }
@@ -44,11 +45,21 @@ end
 def main(input_file, output_file)
   abort "USAGE: ruby main.rb geneList.txt output.txt" unless input_file && output_file
   abort "Error: File #{input_file} does not exist" unless File.exist?(input_file)
-
+  if File.exist?(output_file)
+    print "The file #{output_file} already exist. Do you want to overwrite? (y/n): "
+    response = STDIN.gets.chomp.downcase
+    unless response == 'y'
+      puts "Change the name of the output file."
+      abort
+      return
+    end
+    puts "The file #{output_file} has been updated."
+  end
   puts "Processing gene list and building interaction networks..."
   Gene.load_from_file(input_file)
 
   $PPIS = PPI.all_ppis
+  # puts "Total PPIs loaded: #{$PPIS.size}" DEBUGGING
   Protein.all_prots_withintact.each do |id, prot_object|
     unless prot_object.network
       new_network = Network.create_network
