@@ -9,7 +9,7 @@ require './protein.rb'
 require './annotation.rb'
 
 class Gene
-  attr_accessor :gene_id, :prot_id, :kegg, :go
+  attr_accessor :gene_id, :prot_id, :kegg, :go, :uso_general
 
   # Class variable to store all gene instances
   @@total_gene_objects = {}

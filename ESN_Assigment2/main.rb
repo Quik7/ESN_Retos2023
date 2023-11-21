@@ -32,10 +32,20 @@ def write_record(networks, filename)
       file.puts "Network ID: #{id_net}, Number of Nodes: #{network_obj.num_nodes}"
       file.puts "Genes in Network:"
       network_obj.members.each do |id, gene|
+        puts "Debug: Gene object - #{gene.inspect}"  # Debugging statement
+        #file.puts "\tGene ID: #{gene.gene_id}"
         #puts "Processing Gene ID: #{id}, KEGG Annotations: #{gene.kegg.keys.join(', ')}"
         file.puts "\tGene ID: #{id}"
-        gene.kegg.each { |kegg_id, name| file.puts "\t\tKEGG Pathway: #{kegg_id} - #{name}" }
-        gene.go.each { |go_id, term| file.puts "\t\tGO Term: #{go_id} - #{term}" }
+        # Access annotations from uso_general
+        gene.uso_general.get_annotations('KEGG').each do |kegg_id, name|
+          file.puts "\t\tKEGG Pathway: #{kegg_id} - #{name}"
+        end
+
+        gene.uso_general.get_annotations('GO').each do |go_id, term|
+          file.puts "\t\tGO Term: #{go_id} - #{term}"
+        end
+        #gene.kegg.each { |kegg_id, name| file.puts "\t\tKEGG Pathway: #{kegg_id} - #{name}" }
+        #gene.go.each { |go_id, term| file.puts "\t\tGO Term: #{go_id} - #{term}" }
       end
       file.puts "\n--------------------------------------------\n"
     end
@@ -46,7 +56,7 @@ end
 def ayuda
   puts 'Assigment #2 - Interaction Network'
   puts 'Enrique Solera Navarro 2023'
-  puts "\nusage: ruby main.rb geneList.txt output.txt\n"
+  puts "\nUsage: ruby main.rb geneList.txt output.txt\n"
   puts 'geneList.txt : co-expressed gene list'
   puts 'output.txt : generated file with the report of the information linking these predicted sub-sets into known regulatory networks'
 end
