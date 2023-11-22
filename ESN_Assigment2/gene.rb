@@ -18,6 +18,8 @@ class Gene
   @@cached_responses = {}
 
   # Initialize a new Gene object with given parameters
+  # Initialize a new Gene object with given parameters.
+  # @param params [Hash] Parameters for initializing a Gene object with keys :gene_id, :prot_id, :kegg, :go, :uso_general
   def initialize(params = {})
     @gene_id = validate_gene_id(params.fetch(:gene_id, "AT0G00000"))
     @prot_id = params.fetch(:prot_id, "XXXXXX") # Default UniProt ID
@@ -29,12 +31,15 @@ class Gene
     
   end
 
-  # Class method to return all gene objects
+  # Class method to return all gene objects.
+  # @return [Hash] All stored Gene objects.
   def self.all_genes
     @@total_gene_objects
   end
 
-  # Class method to fetch UniProt ID for a given gene ID
+  # Class method to fetch UniProt ID for a given gene ID.
+  # @param gene_id [String] The gene ID to fetch the UniProt ID for.
+  # @return [String] The fetched UniProt ID.
   def self.get_prot_id(gene_id)
     uri = URI("http://togows.org/entry/ebi-uniprot/#{gene_id}/entry_id.json")
     response = get_response(uri)
@@ -42,7 +47,8 @@ class Gene
     response[0]
   end
 
-  # Class method to create gene objects from a file
+  # Class method to create gene objects from a file.
+  # @param filename [String] Name of the file containing gene IDs.
   def self.load_from_file(filename)
     File.open(filename, 'r') do |file|
       file.each_line do |line|
@@ -66,12 +72,11 @@ class Gene
   end
 
 
-  # https://www.rubyguides.com/2018/10/method-visibility/
-  # private keyword is used to denote that methods like validate_gene_id, get_response, annotate_kegg, and annotate_go are meant 
-  #for internal use within the class. They are part of the class's internal logic and are not intended to be accessed directly 
-  #from outside the class.
-
-  # Validates the gene ID format
+  
+  # Validates the gene ID format.
+  # @param gene_id [String] The gene ID to validate.
+  # @return [String] The validated gene ID.
+  # @raise [RuntimeError] If the gene ID is not in the correct format.
   def validate_gene_id(gene_id)
     if gene_id.match?(/A[Tt]\d[Gg]\d\d\d\d\d/)
       gene_id
@@ -81,7 +86,10 @@ class Gene
     end
   end
 
-  # Fetches response from a URI and caches it
+  # # Fetches response from a URI and caches it.
+  # @param uri [URI] The URI to fetch the response from.
+  # @return [Hash, Array] Parsed JSON response.
+  # @raise [JSON::ParserError] If there's an error parsing the response.
   def self.get_response(uri)
     @@cached_responses[uri] ||= Net::HTTP.get_response(uri)
     JSON.parse(@@cached_responses[uri].body)

@@ -1,3 +1,8 @@
+#-----------------------------------------------------
+# Bioinformatic programming challenges
+# Assignment2: Main script
+# author: Enrique Solera Navarro
+#-----------------------------------------------------
 # Import the required modules
 require './gene.rb'
 require './protein.rb'
@@ -8,7 +13,10 @@ require './annotation.rb'
 # Define a constant for maximum interaction depth
 $MAX_LEVEL = 2
 
-# Function to fetch data from a URI with basic error handling
+# Function to fetch data from a URI with basic error handling.
+# @param uri_str [String] the URI from which data is to be fetched.
+# @return [Net::HTTPResponse] HTTP response object if successful.
+# @raise [RuntimeError] if unable to fetch data from the URI.
 def uri_fetch(uri_str)
   address = URI(uri_str)  
   response = Net::HTTP.get_response(address)
@@ -21,7 +29,9 @@ def uri_fetch(uri_str)
   end 
 end
 
-# Function to write network information to a file
+# Function to write network information to a file.
+# @param networks [Hash] hash containing network ID and network objects.
+# @param filename [String] the name of the file to write to.
 def write_record(networks, filename)
   File.open(filename, "w") do |file|
     file.puts "Network Analysis Report"
@@ -32,9 +42,6 @@ def write_record(networks, filename)
       file.puts "Network ID: #{id_net}, Number of Nodes: #{network_obj.num_nodes}"
       file.puts "Genes in Network:"
       network_obj.members.each do |id, gene|
-        puts "Debug: Gene object - #{gene.inspect}"  # Debugging statement
-        #file.puts "\tGene ID: #{gene.gene_id}"
-        #puts "Processing Gene ID: #{id}, KEGG Annotations: #{gene.kegg.keys.join(', ')}"
         file.puts "\tGene ID: #{id}"
         # Access annotations from uso_general
         gene.uso_general.get_annotations('KEGG').each do |kegg_id, name|
@@ -52,7 +59,9 @@ def write_record(networks, filename)
   end
 end
 
+
 # Main execution block
+# Prints usage information to the console.
 def ayuda
   puts 'Assigment #2 - Interaction Network'
   puts 'Enrique Solera Navarro 2023'
@@ -61,6 +70,9 @@ def ayuda
   puts 'output.txt : generated file with the report of the information linking these predicted sub-sets into known regulatory networks'
 end
 
+# Main function to process input and output files for network analysis.
+# @param input_file [String] the name of the input file.
+# @param output_file [String] the name of the output file.
 def main(input_file, output_file)
   if ARGV[0] == "-help" || ARGV[0] == "-h"
     ayuda
@@ -90,7 +102,7 @@ def main(input_file, output_file)
       Network.assign(prot_object, new_network)
     end
   end
-
+  puts "Finished"
   puts "Writing network analysis to #{output_file}..."
   write_record(Network.all_networks, output_file)
   puts "Process completed. Report generated in #{output_file}."

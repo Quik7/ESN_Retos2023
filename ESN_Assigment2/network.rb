@@ -8,7 +8,8 @@ class Network
   @@total_network_objects = {}
   @@number_of_networks = 0
 
-  # Initialize a new InteractionNetwork object with given parameters
+  # Initialize a new InteractionNetwork object with given parameters.
+  # @param params [Hash] Parameters for initializing a Network object with keys :network_id, :num_nodes, :members.
   def initialize(params = {})
     @network_id = params.fetch(:network_id, @@number_of_networks + 1)
     @num_nodes = params.fetch(:num_nodes, 0)
@@ -19,25 +20,30 @@ class Network
     @@number_of_networks += 1
   end
 
-  # Returns all InteractionNetwork objects
+  # Returns all InteractionNetwork objects.
+  # @return [Hash] All stored Network objects.
   def self.all_networks
     @@total_network_objects
   end
 
-  # Creates a new InteractionNetwork
+  # Creates a new InteractionNetwork.
+  # @return [Integer] The ID of the newly created network.
   def self.create_network
     network_id = @@number_of_networks + 1
     new(network_id: network_id, num_nodes: 2, members: Hash.new)
     network_id
   end
 
-  # Adds nodes to a specified network
+  # Adds nodes to a specified network.
+  # @param network_id [Integer] The ID of the network to add nodes to.
   def self.add_nodes2network(network_id)
     network = @@total_network_objects[network_id]
     network.num_nodes += 1 if network
   end
 
-  # Adds a gene to a specified network
+  # Adds a gene to a specified network.
+  # @param network_id [Integer] The ID of the network to add the gene to.
+  # @param gene_object [Gene] The Gene object to add to the network.
   def self.add_gene2network(network_id, gene_object)
     #puts "Adding Gene to Network: Gene ID - #{gene_object.gene_id}, Network ID - #{network_id}"  # Debugging
     network = @@total_network_objects[network_id]
@@ -47,7 +53,9 @@ class Network
     end
   end
 
-  # Assigns a protein to a network and updates the network recursively
+  # Assigns a protein to a network and updates the network recursively.
+  # @param protein_object [Protein] The Protein object to assign to a network.
+  # @param network_id [Integer] The ID of the network to assign the protein to.
   def self.assign(protein_object, network_id)
     protein_object.network = network_id
     update_network_for_ppis(protein_object, network_id)
@@ -59,7 +67,9 @@ class Network
 
   
 
-  # Helper method to update network based on protein-protein interactions (PPIs)
+  # Helper method to update network based on protein-protein interactions (PPIs).
+  # @param protein_object [Protein] The Protein object involved in PPIs.
+  # @param network_id [Integer] The ID of the network to update.
   def self.update_network_for_ppis(protein_object, network_id)
     # Return immediately if there are no protein-protein interactions stored in $PPIS.
     return unless $PPIS && $PPIS.any?
