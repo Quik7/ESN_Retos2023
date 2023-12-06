@@ -20,7 +20,7 @@ require 'uri'
 def load_from_file(filename)
   genes = []
   File.open(filename, "r") do |file|
-    file.each_line { |line| genes << line.chomp }
+    file.each_line { |line| genes << line.chomp } # Reads each line, removes newline character and adds to array
   end
   genes.uniq
 end
@@ -47,8 +47,8 @@ def obtain_gene_info(gene_id)
     response_body = uri_fetch(address)
     return nil if response_body.nil? || response_body.empty?
 
-    entry = Bio::EMBL.new(response_body)
-    entry.to_biosequence
+    entry = Bio::EMBL.new(response_body) # Creates a Bio::EMBL object from the response
+    entry.to_biosequence # Converts the EMBL entry to a Bio::Sequence object
   rescue => e
     puts "Error obtaining gene info for #{gene_id}: #{e.message}"
     nil
@@ -70,8 +70,9 @@ def find_target_in_exon(exon_id, target_sequence_matches, len_seq, exon_position
     match_end = match_init + $len_target - 1
 
     if match_within_exon?(match_init, match_end, exon_position)
+      # Converts positions for reverse strand, if applicable
       match_init, match_end = convert_positions(match_init, match_end, len_seq) if strand == '-'
-      target_in_exon[[match_init, match_end]] = [exon_id, strand]
+      target_in_exon[[match_init, match_end]] = [exon_id, strand] # Stores match positions and exon details
     end
   end
 
@@ -85,7 +86,10 @@ def match_within_exon?(match_init, match_end, exon_position)
   (match_init >= exon_position[0].to_i) && (match_end <= exon_position[1].to_i)
 end
 
-# Converts positions for the reverse strand
+# Converts the positions of a match from the forward strand to the reverse strand.
+# In a DNA sequence, positions are typically counted from the start of the sequence.
+# When a match is found on the reverse strand, its positions need to be converted 
+# to reflect the correct locations relative to the forward strand.
 def convert_positions(match_init, match_end, len_seq)
   [len_seq - match_end, len_seq - match_init]
 end
@@ -97,13 +101,20 @@ def get_exons_targets(bio_seq_object)
   len_bio_seq = bio_seq_object.length
   target_positions_in_exon = {}
 
+  # Finds matches of the target sequence in the forward strand of the biological sequence
   target_matches_in_seq_forward = find_target_matches(bio_seq_object, $target)
+  
+  # Finds matches of the target sequence in the reverse complement of the biological sequence
+
   target_matches_in_seq_reverse = find_target_matches(bio_seq_object.reverse_complement, $target)
 
   bio_seq_object.features.each do |feature|
+    # Skips the iteration unless the feature is an exon and the position does not contain alphabetic characters
     next unless feature.feature == 'exon' && feature.position !~ /[A-Z]/
-
+    
+    # Parses the exon feature to extract exon ID, position, and strand information
     exon_id, position, strand = parse_exon_feature(feature, len_bio_seq)
+    # Determines if any target matches are within the exon, considering the strand
     target_pos_in_exon = find_target_in_exon(exon_id, strand == '+' ? target_matches_in_seq_forward : target_matches_in_seq_reverse, len_bio_seq, position, strand)
 
     target_positions_in_exon.merge!(target_pos_in_exon) if target_pos_in_exon
@@ -120,10 +131,12 @@ private
 # @param [String] target Target sequence to find
 # @return [Array<Integer>] Array of match start positions
 def find_target_matches(sequence, target)
-  match_positions = []
+  match_positions = [] # Initializes an array to store the start positions of matches
   regex = Regexp.new(target)
-
+  
+  # Converts the sequence to a string and scans it for matches with the regex
   sequence.to_s.scan(regex) do |match|
+    # For each match, append the start position of the match to the match_positions array
     match_positions << Regexp.last_match.begin(0)
   end
 
@@ -131,17 +144,40 @@ def find_target_matches(sequence, target)
 end
 
 
-# Parses an exon feature to extract relevant information
+# Parses an exon feature to extract relevant information such as exon ID, position, and strand.
+# This method is used when processing a Bio::EMBL feature object representing an exon.
+#
+# @param feature [Bio::Feature] The Bio::Feature object representing an exon.
+# @param len_bio_seq [Integer] The total length of the biological sequence.
+# @return [Array<String, Array<Integer>, String>] An array containing the exon ID, 
+#         the start and end positions of the exon, and the strand ('+' or '-').
 def parse_exon_feature(feature, len_bio_seq)
+  # Extracts the exon ID from the first qualifier of the feature.
+  # The 'gsub' method is used to remove the 'exon_id=' prefix from the value.
   exon_id = feature.qualifiers[0].value.gsub('exon_id=', '')
+
+  # Retrieves the position string of the exon from the feature.
+  # This string contains information about the start and end positions of the exon.
   position = feature.position
+
+  # Determines the strand of the exon.
+  # If the position string includes 'complement', it indicates the exon is on the reverse strand,
+  # represented by a '-' sign. Otherwise, the exon is on the forward strand, represented by '+'.
   strand = position.include?('complement') ? '-' : '+'
 
+  # Parses the position string to get start and end positions as integers.
+  # The 'parse_position' method is called with the position string, the total sequence length,
+  # and the strand information. It returns an array with start and end positions.
   position = parse_position(position, len_bio_seq, strand)
+
+  # Returns an array containing the extracted exon ID, the start and end positions of the exon,
+  # and the strand information.
   [exon_id, position, strand]
 end
 
-# Parses the position string to get start and end positions
+# Parses the position string from a feature to extract the start and end positions.
+# This method is crucial for understanding the exact location of a feature (like an exon) 
+# within a biological sequence, taking into account whether it's on the forward or reverse strand.
 def parse_position(position, len_bio_seq, strand)
   position = position.gsub('complement', '').delete('()').split('..').map(&:to_i)
   strand == '-' ? position.map { |pos| len_bio_seq - pos }.reverse : position
@@ -160,13 +196,31 @@ end
 
 private
 
-# Adds a new feature to the Bio::EMBL object
+# Adds a new feature to a Bio::EMBL object, representing a nucleotide motif found within an exon.
+# This method is used to annotate a biological sequence with specific features found during analysis,
+# such as a target sequence located within an exon.
+#
+# @param target [Array<Integer>] An array containing the start and end positions of the target motif.
+# @param exonid_strand [Array<String, String>] An array containing the exon ID and the strand ('+' or '-').
+# @param bioseq [Bio::EMBL] The Bio::EMBL object to which the new feature will be added.
 def add_feature_to_bioseq(target, exonid_strand, bioseq)
+  # Creates a new Bio::Feature object.
+  # The first parameter is a label for the feature, constructed using the target name and its location (in an exon).
+  # The second parameter is the position of the feature within the sequence, formatted as 'start..end'.
   feat = Bio::Feature.new("#{feature_name(target)}_in_exon", "#{target[0]}..#{target[1]}")
+
+  # Appends a 'nucleotide_motif' qualifier to the feature.
+  # This qualifier describes the specific nucleotide motif, including the exon it is found in.
   feat.append(Bio::Feature::Qualifier.new('nucleotide_motif', "#{feature_name(target)}_in_#{exonid_strand[0]}"))
+
+  # Appends a 'strand' qualifier to the feature.
+  # This qualifier indicates whether the motif is on the forward ('+') or reverse ('-') strand.
   feat.append(Bio::Feature::Qualifier.new('strand', exonid_strand[1]))
+
+  # Adds the newly created feature to the features list of the Bio::EMBL object.
   bioseq.features << feat
 end
+
 
 # Writes the feature to the GFF3 file
 def write_feature_to_gff(gene_id, target, exonid_strand)
@@ -265,14 +319,14 @@ end
 # Main execution with updated progress control
 puts "Working on the tasks..."
 
-$gff_genes = create_open_file("genes.gff3: Enrique Solera Navarro")
-$gff_chr = create_open_file("chromosomes.gff3: Enrique Solera Navarro")
-$no_targets = create_open_file("genes_without_target.txt: Enrique Solera Navarro")
+$gff_genes = create_open_file("genes.gff3")
+$gff_chr = create_open_file("chromosomes.gff3")
+$no_targets = create_open_file("genes_without_target.txt")
 
 # Printing headers
-$gff_genes.puts "##gff-version 3"
-$gff_chr.puts "##gff_chr-version 3"
-$no_targets.puts "Genes without #{$target.upcase} in exons\n\n"
+$gff_genes.puts "##gff-version 3 Enrique Solera Navarro"
+$gff_chr.puts "##gff_chr-version 3 Enrique Solera Navarro"
+$no_targets.puts "Genes without #{$target.upcase} in exons Enrique Solera Navarro\n\n"
 
 genes_ids = load_from_file(ARGV[0])
 total_genes = genes_ids.length
