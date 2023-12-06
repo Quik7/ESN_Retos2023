@@ -265,9 +265,9 @@ end
 # Main execution with updated progress control
 puts "Working on the tasks..."
 
-$gff_genes = create_open_file("genes.gff3")
-$gff_chr = create_open_file("chromosomes.gff3")
-$no_targets = create_open_file("genes_without_target.txt")
+$gff_genes = create_open_file("genes.gff3: Enrique Solera Navarro")
+$gff_chr = create_open_file("chromosomes.gff3: Enrique Solera Navarro")
+$no_targets = create_open_file("genes_without_target.txt: Enrique Solera Navarro")
 
 # Printing headers
 $gff_genes.puts "##gff-version 3"
