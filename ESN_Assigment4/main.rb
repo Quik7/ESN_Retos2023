@@ -91,14 +91,21 @@ if [search_file_type, target_file_type].sort == ['nucl', 'prot']
     # Create BLAST databases for the input files
     # For the search file (protein sequence), create a protein database
     # For the target file (nucleotide sequence), create a nucleotide database
-    create_blast_db(search_file, 'prot', db_search)
-    create_blast_db(target_file, 'nucl', db_target)
+    if search_file_type == 'prot' and target_file_type == 'nucl'
+      create_blast_db(search_file, 'prot', db_search)
+      create_blast_db(target_file, 'nucl', db_target)
 
-    # Initialize BLAST factories for searching
-    # blastx: Compare protein query against nucleotide database
-    # tblastn: Compare nucleotide database against protein query
-    factory_search = Bio::Blast.local('blastx', "#{DB_DIR}/#{db_search}", "-e 10e-6 -sorthits 1")
-    factory_target = Bio::Blast.local('tblastn', "#{DB_DIR}/#{db_target}", "-e 10e-6 -sorthits 1")
+      # Initialize BLAST factories for searching
+      # blastx: Compare protein query against nucleotide database
+      # tblastn: Compare nucleotide database against protein query
+      factory_search = Bio::Blast.local('blastx', "#{DB_DIR}/#{db_search}", "-e 10e-6 -sorthits 1")
+      factory_target = Bio::Blast.local('tblastn', "#{DB_DIR}/#{db_target}", "-e 10e-6 -sorthits 1")
+    elsif search_file_type == 'nucl' and target_file_type == 'prot'
+      create_blast_db(search_file, 'nucl', db_search)
+      create_blast_db(target_file, 'prot', db_target)
+      factory_search = Bio::Blast.local('tblastn', "#{DB_DIR}/#{db_search}", "-e 10e-6 -sorthits 1")
+      factory_target = Bio::Blast.local('blastx', "#{DB_DIR}/#{db_target}", "-e 10e-6 -sorthits 1")
+    end
   elsif method_choice == "2"
     # User has chosen the translate and blastp method
     puts "You have chosen the translate and blastp method"
