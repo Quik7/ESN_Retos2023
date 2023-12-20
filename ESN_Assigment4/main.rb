@@ -5,6 +5,43 @@
 #-----------------------------------------------------------------
 # Searching for Orthologues
 #-----------------------------------------------------------------
+# Since the A. thaliana database consists of coding sequences (CDS), it will be converted into a protein database. 
+# This conversion facilitates the use of standard blastp queries rather than relying on computationally intensive 
+# translated tblastn or blastx methods. It's important to note that this approach is only viable when the 
+# nucleotide database is specifically limited to CDS. Nevertheless, it is conserved in the program the option to perform
+# a blastx / tblastn if the user want to do it.
+#-----------------------------------------------------------------
+# PARAMETERS CHOSEN
+#-----------------------------------------------------------------
+# The E-value, or Expectation value, is a key metric in BLAST searches. It estimates the number of times an alignment 
+# with a given score or better could occur by chance in a database search. A lower E-value indicates a more significant match. 
+# An E-value of 10e-6 suggests that the likelihood of the alignment occurring by random chance is very low, thus implying 
+# a more significant and biologically relevant match
+# The bit score (S’) is another important measure in BLAST results. It represents the quality of the alignment between the 
+# query sequences and the target sequence. A higher bit score indicates a higher similarity and, consequently, a more reliable alignment. 
+# The bit score is advantageous because it is normalized (adjusted for scoring parameters such as the substitution matrix and gap penalty), 
+# making it useful for comparing alignments obtained using different scoring parameters. A minimum bit score of 50 is a reasonable threshold 
+# to ensure that the alignments are of a decent quality,
+# Gabriel Moreno-Hagelsieb, Kristen Latimer, Choosing BLAST options for better detection of orthologs as reciprocal best hits, 
+# Bioinformatics, Volume 24, Issue 3, February 2008, Pages 319–324, https://doi.org/10.1093/bioinformatics/btm585
+#------------------------------------------------------------------
+# CONTINUED ANALYSIS
+#------------------------------------------------------------------
+# 1. Phylogenetic Analysis: Construct a phylogenetic tree using the sequences of the identified orthologues along with other related sequences. 
+# This helps in understanding the evolutionary relationships and confirming orthology. The code would involve aligning the sequences, selecting 
+# an appropriate model of evolution, and then building and visualizing the phylogenetic tree.
+# 2. Conservation of Protein Domains and Motifs: Examine the protein domains and motifs in the orthologue candidates to check for conservation. 
+# This step often involves using tools like Pfam or InterProScan to identify and compare functional domains. The analysis would focus on whether 
+# the critical domains and motifs are conserved across the species, which supports the hypothesis of orthology.
+# 3. Functional Studies: Investigate the function of the genes in their respective organisms. This might involve looking at gene expression data, 
+# knockout studies, or literature research to see if the genes have similar roles in their respective organisms. The code for such an analysis might 
+# involve querying gene expression databases, performing statistical analysis on expression data, or text mining scientific literature for functional information.
+# 4. Synteny Analysis: Examine the genomic context of these genes in different species. Orthologous genes often exhibit conserved synteny, meaning 
+# they are located in similar genomic contexts in different species. This analysis would involve comparing the genomic regions surrounding the orthologue 
+# candidates across different species.
+# 5. Evolutionary Rate Analysis: Compare the rate of evolution of these genes across species. Orthologues are expected to have similar rates of evolution. 
+# This would involve calculating and comparing the non-synonymous (dN) and synonymous (dS) substitution rates for these genes.
+#-----------------------------------------------------------------
 
 require 'bio'
 
